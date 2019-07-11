@@ -1,6 +1,6 @@
 {
   "name": "rzzc-tool",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "npm组件打包工具",
   "main": "lib/index.js",
   "bin": {
