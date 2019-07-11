@@ -42,7 +42,7 @@ if (!task) {
 } else {
   console.log('rzzc-tool run', task);
 
-  require('../gulpfile');
+  require('../gulpConfig/gulpfile');
 
   runTask(task);
 }

@@ -7,7 +7,7 @@
     "rzzc-tool": "./bin/rzzc-tool.js"
   },
   "scripts": {
-    "start": "gulp compile",
+    "start": "node ./bin/rzzc-tool.js run compile",
     "p": "npm publish .",
     "v1": "npm version patch",
     "v2": "npm version minor",
