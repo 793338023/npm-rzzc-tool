@@ -1,6 +1,6 @@
 {
   "name": "rzzc-tool",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "npm组件打包工具",
   "main": "lib/index.js",
   "bin": {
@@ -49,6 +49,9 @@
   "customParams": {
     "scanRoot": "demo/components",
     "typeRoot": "demo/typings",
-    "clean": ["es", "lib"]
+    "clean": [
+      "es",
+      "lib"
+    ]
   }
 }
