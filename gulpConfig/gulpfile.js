@@ -10,6 +10,9 @@ sass.compiler = require('node-sass');
 const getBabelCommonConfig = require('./babel');
 const { getProjectPath, cssInjection } = require('./utils');
 
+const postcss = require('gulp-postcss');
+const postcssConfig = require('./postcssConfig');
+
 const libDir = getProjectPath('lib');
 const esDir = getProjectPath('es');
 
@@ -44,6 +47,7 @@ function compile(modules) {
     // css打包
     const sassGulp = gulp.src([scanRootDir+'/**/*.scss'])
         .pipe(sass().on('error', sass.logError))
+        .pipe( postcss(postcssConfig.plugins) )
         .pipe(gulp.dest(modules === false ? esDir : libDir));
     
     // js打包 

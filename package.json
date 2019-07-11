@@ -30,17 +30,20 @@
     "@babel/preset-react": "^7.0.0",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
+    "autoprefixer": "^9.6.1",
     "colorful": "^2.1.0",
+    "commander": "^2.20.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
+    "gulp-postcss": "^8.0.0",
     "gulp-sass": "^4.0.2",
     "gulp-typescript": "^5.0.1",
     "merge2": "^1.2.3",
     "node-sass": "^4.12.0",
     "rimraf": "^2.6.3",
+    "rucksack-css": "^1.0.2",
     "through2": "^3.0.1",
-    "typescript": "^3.5.2",
-    "commander": "^2.20.0"
+    "typescript": "^3.5.2"
   },
   "customParams": {
     "scanRoot": "src/components",
