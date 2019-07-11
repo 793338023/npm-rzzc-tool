@@ -24,6 +24,8 @@ const {scanRoot='src/components', typeRoot='src/typings'} = customParams;
 const scanRootDir = getProjectPath(scanRoot);
 const typeRootDir = getProjectPath(typeRoot);
 
+const cleanDirArr = Array.isArray(customParams.clean)?customParams.clean:['es','lib'];
+
 function babelify(js, modules){
     const babelConfig = getBabelCommonConfig(modules);
 
@@ -96,8 +98,19 @@ gulp.task('run-lib', (done) => {
     });
 });
 
-console.log(gulp.task);
-
 gulp.task('compile', gulp.parallel('run-es', 'run-lib'));
 
-
+gulp.task('clean', done=>{
+    const len = cleanDirArr.length;
+    let count = 0;
+    cleanDirArr.forEach(element => {
+        rimraf(getProjectPath(element),err=>{
+            count++;
+            if(err){
+                console.log(err);
+            }else{
+                console.log(element+":已删除");
+            }
+        });
+    });
+});

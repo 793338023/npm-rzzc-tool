@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node ./bin/rzzc-tool.js run compile",
+    "clean": "node ./bin/rzzc-tool.js run clean",
     "p": "npm publish .",
     "v1": "npm version patch",
     "v2": "npm version minor",
@@ -46,7 +47,8 @@
     "typescript": "^3.5.2"
   },
   "customParams": {
-    "scanRoot": "src/components",
-    "typeRoot": "src/typings"
+    "scanRoot": "demo/components",
+    "typeRoot": "demo/typings",
+    "clean": ["es", "lib"]
   }
 }
