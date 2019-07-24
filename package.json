@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node ./bin/rzzc-tool.js run compile",
     "clean": "node ./bin/rzzc-tool.js run clean",
+    "d": "node ./bin/rzzc-tool.js run mkdir",
     "p": "npm publish .",
     "v1": "npm version patch",
     "v2": "npm version minor",

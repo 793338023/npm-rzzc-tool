@@ -9,7 +9,7 @@ const packageInfo = require('../package.json');
 
 program
   .version(packageInfo.version)
-  .command('run [name]', 'run specified task')
+  .command('run [name] [other]', 'run specified task')
   .parse(process.argv);
 
 // https://github.com/tj/commander.js/pull/260

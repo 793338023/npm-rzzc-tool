@@ -9,7 +9,7 @@ let sass = require('gulp-sass');
 sass.compiler = require('node-sass');
 const getBabelCommonConfig = require('./babel');
 const { getProjectPath, cssInjection } = require('./utils');
-
+const {createComponent} = require('./initComponent');
 const postcss = require('gulp-postcss');
 const postcssConfig = require('./postcssConfig');
 
@@ -20,22 +20,22 @@ const packageJson = require(getProjectPath('package.json'));
 
 // scanRoot扫描打包组件的目录 typeRoot为模块声明目录
 const customParams = packageJson.customParams || {};
-const {scanRoot='src/components', typeRoot='src/typings'} = customParams;
+const { scanRoot = 'src/components', typeRoot = 'src/typings' } = customParams;
 const scanRootDir = getProjectPath(scanRoot);
 const typeRootDir = getProjectPath(typeRoot);
 
-const cleanDirArr = Array.isArray(customParams.clean)?customParams.clean:['es','lib'];
+const cleanDirArr = Array.isArray(customParams.clean) ? customParams.clean : ['es', 'lib'];
 
-function babelify(js, modules){
+function babelify(js, modules) {
     const babelConfig = getBabelCommonConfig(modules);
 
-    return js.pipe(babel(babelConfig)).pipe(through2.obj(function(file, encoding, next){
+    return js.pipe(babel(babelConfig)).pipe(through2.obj(function (file, encoding, next) {
         if (file.path.match(/(\/|\\)style(\/|\\)index\.js/)) {
             const content = file.contents.toString(encoding);
             file.contents = Buffer.from(cssInjection(content));
             this.push(file);
             next();
-        }else{
+        } else {
             this.push(file);
             next();
         }
@@ -43,15 +43,15 @@ function babelify(js, modules){
 }
 
 function compile(modules) {
-    const source = [scanRootDir+'/**/*.tsx', scanRootDir+'/**/*.ts', typeRootDir+'/**/*.d.ts'];
+    const source = [scanRootDir + '/**/*.tsx', scanRootDir + '/**/*.ts', typeRootDir + '/**/*.d.ts'];
     rimraf.sync(modules === false ? esDir : libDir);
-    
+
     // css打包
-    const sassGulp = gulp.src([scanRootDir+'/**/*.scss'])
+    const sassGulp = gulp.src([scanRootDir + '/**/*.scss'])
         .pipe(sass().on('error', sass.logError))
-        .pipe( postcss(postcssConfig.plugins) )
+        .pipe(postcss(postcssConfig.plugins))
         .pipe(gulp.dest(modules === false ? esDir : libDir));
-    
+
     // js打包 
     const tsConfig = {
         target: 'es6',
@@ -66,33 +66,33 @@ function compile(modules) {
     const tsResult = gulp.src(source).pipe(
         ts(tsConfig, {
             error(e) {
-              tsDefaultReporter.error(e);
-              error = 1;
+                tsDefaultReporter.error(e);
+                error = 1;
             },
             finish: tsDefaultReporter.finish,
-          })
+        })
     );
 
     const js = babelify(tsResult.js, modules);
     const tsd = tsResult.dts.pipe(gulp.dest(modules === false ? esDir : libDir));
     // 静态资源
     const assets = gulp
-    .src([scanRootDir+'/**/*.jpg',scanRootDir+'/**/*.png',scanRootDir+'/**/*.svg'])
-    .pipe(gulp.dest(modules === false ? esDir : libDir));
-        
+        .src([scanRootDir + '/**/*.jpg', scanRootDir + '/**/*.png', scanRootDir + '/**/*.svg'])
+        .pipe(gulp.dest(modules === false ? esDir : libDir));
+
     return merge2([sassGulp, js, tsd, assets]);
 }
 
 gulp.task('run-es', (done) => {
     console.log('[run-es] Compile...');
-    compile(false).on('finish',()=>{
+    compile(false).on('finish', () => {
         console.log("[run-es] end...");
         done();
     });
 });
 gulp.task('run-lib', (done) => {
     console.log('[run-lib] Compile...');
-    compile('auto').on('finish',()=>{
+    compile('auto').on('finish', () => {
         console.log("[run-lib] end...");
         done();
     });
@@ -100,17 +100,25 @@ gulp.task('run-lib', (done) => {
 
 gulp.task('compile', gulp.parallel('run-es', 'run-lib'));
 
-gulp.task('clean', done=>{
+gulp.task('clean', done => {
     const len = cleanDirArr.length;
     let count = 0;
     cleanDirArr.forEach(element => {
-        rimraf(getProjectPath(element),err=>{
+        rimraf(getProjectPath(element), err => {
             count++;
-            if(err){
+            if (err) {
                 console.log(err);
-            }else{
-                console.log(element+":已删除");
+            } else {
+                console.log(element + ":已删除");
             }
         });
     });
 });
+
+gulp.task('mkdir', done => {
+    createComponent(scanRootDir);
+});
+
+
+
+

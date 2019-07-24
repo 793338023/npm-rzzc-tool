@@ -37,6 +37,8 @@ function runTask(toRun) {
 
 const task = program.args[0];
 
+process.env.dir = program.args[1];
+
 if (!task) {
   program.help();
 } else {
