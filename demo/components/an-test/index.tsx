@@ -7,6 +7,9 @@ export interface IState{
 }
 
 class Tant extends React.Component<IProps,IState> {
+    constructor(props){
+        super(props);
+    }
     state:IState={
         val:""
     };
