@@ -1,4 +1,6 @@
 const fs = require("fs");
+const path = require('path');
+const readline = require('linebyline');
 
 function createComponent(scanRootDir) {
     const dir = process.env.dir;
@@ -13,6 +15,8 @@ function createComponent(scanRootDir) {
     }
     console.log(componentDir);
     createDir(componentDir);
+    console.log("开始检查...");
+    checkFile(scanRootDir);
 }
 
 var projectData = {
@@ -57,6 +61,7 @@ function createDir(dir) {
                         f.content += spliceContent(dir);
                     }
                     fs.writeFileSync(f.path, f.content, 'utf-8');
+                    console.log("模板生成完毕...");
                     break;
                 default:
                     break;
@@ -65,7 +70,7 @@ function createDir(dir) {
     }
 }
 
-// 
+// 导出文件模板
 function spliceContent(name) {
     let content = '';
     try {
@@ -104,11 +109,13 @@ function transName(name) {
 }
 
 // 目录是否存在
-function isHasDir(dir) {
+function isHasDir(dir, isFiles = false) {
     let ret = false;
     try {
         const stat = fs.statSync(dir);
         if (stat.isDirectory()) {
+            ret = true;
+        }else if(isFiles && stat.isFile()){
             ret = true;
         }
     } catch (e) {
@@ -118,4 +125,68 @@ function isHasDir(dir) {
     }
 }
 
-module.exports = { createComponent };
+function checkFile(dir){
+    try{
+        fs.readdir(dir,(err, files)=>{
+            if(err){
+                console.log(err);
+                return ;
+            }
+            readAndWrite(dir, files);
+        });
+    }catch(err){
+        console.log(err);
+    }
+}
+
+function readAndWrite(dir, files){
+    const fileName = "index.tsx";
+    const index = files.indexOf(fileName);
+    const indexFile = path.resolve(dir, fileName);
+    if(!~index){
+        console.log(indexFile+":不存在");
+        return ;
+    }
+    files.splice(index, 1);
+    const checkDirArr = [];
+    files.forEach((item)=>{
+        const stat = fs.statSync(path.resolve(dir, item));
+        if (stat.isDirectory()) {
+            checkDirArr.push("./"+item);
+        }
+    });
+
+    const lineArr = [];
+    const delCountLineArr = [];
+    rl = readline(indexFile);
+    rl.on('line', function(line, lineCount, byteCount) {
+        if(~line.indexOf("export")){
+            if(line.match(new RegExp(checkDirArr.join("|")))){
+                lineArr.push(line+"\n");
+            }else{
+                delCountLineArr.push({line,lineCount});
+            }
+        }else{
+            if(line.trim() !== ""){
+                lineArr.push(line);
+            }
+        }
+      })
+      .on('error', function(e) {
+        console.error(e);
+      }).on('close',()=>{
+          if(delCountLineArr.length){
+            console.log("删除了:");
+            console.log(delCountLineArr);
+            fs.writeFileSync(indexFile, lineArr.join("\n"), 'utf-8');
+          }
+          console.log("检查完毕!!!!!");
+      });
+}
+
+
+module.exports = { 
+    isExitDirFile: isHasDir,
+    checkFile: checkFile,
+    createComponent
+ };

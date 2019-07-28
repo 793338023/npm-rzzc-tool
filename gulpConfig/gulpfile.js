@@ -7,9 +7,11 @@ const tsDefaultReporter = ts.reporter.defaultReporter();;
 const through2 = require('through2');
 let sass = require('gulp-sass');
 sass.compiler = require('node-sass');
+const size = require('gulp-size');
+const notify = require('gulp-notify');
 const getBabelCommonConfig = require('./babel');
 const { getProjectPath, cssInjection } = require('./utils');
-const {createComponent} = require('./initComponent');
+const {createComponent, checkFile} = require('./initComponent');
 const postcss = require('gulp-postcss');
 const postcssConfig = require('./postcssConfig');
 
@@ -39,7 +41,8 @@ function babelify(js, modules) {
             this.push(file);
             next();
         }
-    })).pipe(gulp.dest(modules === false ? esDir : libDir));
+    }))
+    .pipe(gulp.dest(modules === false ? esDir : libDir));
 }
 
 function compile(modules) {
@@ -84,18 +87,32 @@ function compile(modules) {
 }
 
 gulp.task('run-es', (done) => {
+    const s = size({
+        title:"[run-es] ",
+        showFiles: true,
+        showTotal: true
+    });
     console.log('[run-es] Compile...');
-    compile(false).on('finish', () => {
+    compile(false)
+    .on('finish', () => {
         console.log("[run-es] end...");
         done();
-    });
+    })
+    .pipe(s);
 });
 gulp.task('run-lib', (done) => {
+    const s = size({
+        title:"[run-lib] ",
+        showFiles: true,
+        showTotal: true,
+        prettified: true
+    });
     console.log('[run-lib] Compile...');
     compile('auto').on('finish', () => {
         console.log("[run-lib] end...");
         done();
-    });
+    })
+    .pipe(s);
 });
 
 gulp.task('compile', gulp.parallel('run-es', 'run-lib'));
@@ -119,6 +136,8 @@ gulp.task('mkdir', done => {
     createComponent(scanRootDir);
 });
 
-
+gulp.task('check', done => {
+    checkFile(scanRootDir);
+});
 
 
