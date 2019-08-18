@@ -1,16 +1,20 @@
 {
   "name": "rzzc-tool",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "npm组件打包工具",
   "main": "lib/index.js",
   "bin": {
-    "rzzc-tool": "./bin/rzzc-tool.js"
+    "rzzc-tool": "./bin/index.js"
   },
+  "files": [
+    "bin",
+    "gulpConfig"
+  ],
   "scripts": {
-    "start": "node ./bin/rzzc-tool.js run compile",
-    "clean": "node ./bin/rzzc-tool.js run clean",
-    "d": "node ./bin/rzzc-tool.js run mkdir",
-    "check": "node ./bin/rzzc-tool.js run check",
+    "start": "node ./bin/index.js run compile",
+    "clean": "node ./bin/index.js run clean",
+    "d": "node ./bin/index.js run mkdir",
+    "check": "node ./bin/index.js run check",
     "p": "npm publish .",
     "v1": "npm version patch",
     "v2": "npm version minor",
@@ -58,5 +62,9 @@
       "es",
       "lib"
     ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:793338023/npm-rzzc-tool.git"
   }
 }
